@@ -11,7 +11,7 @@ import (
 )
 
 type Cmd struct {
-	h          bool
+	help       bool
 	c          bool
 	d          bool
 	u          bool
@@ -53,14 +53,14 @@ func (conf Configure) removeDuplicates(lines []string) []string {
 
 	j := 0
 
-	for i, x := range lines {
+	for i, line := range lines {
 
-		x = conf.checkI(x)
-		x = conf.checkF(x)
-		x = conf.checkS(x)
+		line = conf.checkI(line)
+		line = conf.checkF(line)
+		line = conf.checkS(line)
 
-		if !alreadySeen[x] {
-			alreadySeen[x] = true
+		if !alreadySeen[line] {
+			alreadySeen[line] = true
 			lines[j] = lines[i]
 			j++
 		}
@@ -74,23 +74,23 @@ func (conf Configure) Counter(lines []string) []string {
 
 	j := 0
 
-	for i, x := range lines {
+	for i, line := range lines {
 
-		x = conf.checkI(x)
-		x = conf.checkF(x)
-		x = conf.checkS(x)
+		line = conf.checkI(line)
+		line = conf.checkF(line)
+		line = conf.checkS(line)
 
-		if !alreadySeen[x] {
-			alreadySeen[x] = true
-			count[x] = j
+		if !alreadySeen[line] {
+			alreadySeen[line] = true
+			count[line] = j
 			lines[j] = "1 " + (lines)[i]
 			j++
 		} else {
-			line := lines[count[x]]
-			arr := strings.Split(line, " ")
+			oneLine := lines[count[line]]
+			arr := strings.Split(oneLine, " ")
 			val, _ := strconv.Atoi(arr[0])
-			line = strings.Join(arr[1:], " ")
-			lines[count[x]] = strconv.Itoa(val+1) + " " + line
+			oneLine = strings.Join(arr[1:], " ")
+			lines[count[line]] = strconv.Itoa(val+1) + " " + oneLine
 		}
 	}
 	return lines[:j]
@@ -102,19 +102,19 @@ func (conf Configure) Duplicate(lines []string) []string {
 
 	j := 0
 
-	for i, x := range lines {
+	for i, line := range lines {
 
-		x = conf.checkI(x)
-		x = conf.checkF(x)
-		x = conf.checkS(x)
+		line = conf.checkI(line)
+		line = conf.checkF(line)
+		line = conf.checkS(line)
 
-		if !alreadySeen[x] {
-			alreadySeen[x] = true
-			count[x] = i
+		if !alreadySeen[line] {
+			alreadySeen[line] = true
+			count[line] = i
 		} else {
-			if count[x] != -1 {
-				lines[j] = lines[count[x]]
-				count[x] = -1
+			if count[line] != -1 {
+				lines[j] = lines[count[line]]
+				count[line] = -1
 				j++
 			}
 		}
@@ -128,8 +128,8 @@ func (conf Configure) Unique(lines []string) []string {
 
 	j := 0
 
-	for _, x := range lines {
-		arr := strings.Split(x, " ")
+	for _, line := range lines {
+		arr := strings.Split(line, " ")
 		val, _ := strconv.Atoi(arr[0])
 		if val == 1 {
 			lines[j] = strings.Join(arr[1:], " ")
@@ -182,11 +182,11 @@ func (a Application) inFromFile(arr *[]string) error {
 }
 
 func (a Application) outFromScan(arr []string) string {
-	str := ""
+	var str strings.Builder
 	for _, x := range arr {
-		str += x + "\n"
+		str.WriteString(x)
 	}
-	return str
+	return str.String()
 }
 
 func (a Application) outFromFile(arr []string) error {
@@ -206,7 +206,7 @@ func (a Application) outFromFile(arr []string) error {
 }
 
 func (a *Application) Parse() {
-	flag.BoolVar(&a.cmd.h, "help", false, "help")
+	flag.BoolVar(&a.cmd.help, "help", false, "help")
 	flag.BoolVar(&a.cmd.c, "c", false, "подсчитать количество встречаний строки во входных данных. Вывести это число перед строкой отделив пробелом.")
 	flag.BoolVar(&a.cmd.d, "d", false, "вывести только те строки, которые повторились во входных данных.")
 	flag.BoolVar(&a.cmd.u, "u", false, "вывести только те строки, которые не повторились во входных данных.")
@@ -215,9 +215,9 @@ func (a *Application) Parse() {
 	flag.IntVar(&a.cmd.s, "s", 0, "не учитывать первые num_chars символов в строке.")
 	flag.Parse()
 
-	var names = [...]*string{&a.cmd.inputFile, &a.cmd.outputFile}
+	var names = []string{a.cmd.inputFile, a.cmd.outputFile}
 	for i := 0; i < len(flag.Args()); i++ {
-		*(names)[i] = flag.Args()[i]
+		names = append(names, flag.Args()[i])
 	}
 }
 
@@ -235,7 +235,7 @@ func (a Application) checkCDU() error {
 	var arrBools = []bool{a.cmd.c, a.cmd.d, a.cmd.u}
 
 	if len(a.filter(arrBools, func(b bool) bool { return b })) > 1 {
-		return errors.New("dont use -c -d -u together")
+		return errors.New("don't use -c -d -u together")
 	}
 	return nil
 }
@@ -243,7 +243,7 @@ func (a Application) checkCDU() error {
 func (a *Application) RunApp(reader io.Reader) string {
 	a.Parse()
 
-	if a.cmd.h {
+	if a.cmd.help {
 		flag.PrintDefaults()
 		return ""
 	}

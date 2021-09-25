@@ -54,11 +54,12 @@ func basic(lit *ast.BasicLit) (float64, error) {
 	}
 }
 
-func binary(str *ast.BinaryExpr) (result float64, err error) {
+func binary(str *ast.BinaryExpr) (float64, error) {
 	x, error1 := eval(str.X)
 	y, error2 := eval(str.Y)
 
-	result = -1
+	result := -1.0
+	var err error
 
 	if error1 == nil && error2 == nil {
 		switch str.Op {
@@ -80,7 +81,7 @@ func binary(str *ast.BinaryExpr) (result float64, err error) {
 			err = error2
 		}
 	}
-	return
+	return result, err
 }
 
 func unary(str *ast.UnaryExpr) (float64, error) {
@@ -100,5 +101,5 @@ func unary(str *ast.UnaryExpr) (float64, error) {
 	} else {
 		return -1, err
 	}
-	return float64(result), err
+	return result, err
 }

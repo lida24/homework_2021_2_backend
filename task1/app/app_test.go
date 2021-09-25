@@ -6,7 +6,7 @@ import (
 
 func TestCountMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          true,
 		d:          false,
 		u:          false,
@@ -29,7 +29,7 @@ func TestCountMode(t *testing.T) {
 
 func TestDuplicatedMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          true,
 		u:          false,
@@ -52,7 +52,7 @@ func TestDuplicatedMode(t *testing.T) {
 
 func TestUniqueMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          true,
@@ -75,7 +75,7 @@ func TestUniqueMode(t *testing.T) {
 
 func TestAnyCaseMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          false,
@@ -104,7 +104,7 @@ func TestAnyCaseMode(t *testing.T) {
 
 func TestBaseMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          false,
@@ -127,7 +127,7 @@ func TestBaseMode(t *testing.T) {
 
 func TestNumFieldsMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          false,
@@ -156,7 +156,7 @@ func TestNumFieldsMode(t *testing.T) {
 
 func TestNumCharsMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          false,
@@ -191,7 +191,7 @@ func TestNumCharsMode(t *testing.T) {
 
 func TestDuplicatedAndAnyCaseMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          true,
 		u:          false,
@@ -214,7 +214,7 @@ func TestDuplicatedAndAnyCaseMode(t *testing.T) {
 
 func TestCountAndAnyCaseMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          true,
 		d:          false,
 		u:          false,
@@ -237,7 +237,7 @@ func TestCountAndAnyCaseMode(t *testing.T) {
 
 func TestUniqueAndAnyCaseMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          true,
@@ -260,7 +260,7 @@ func TestUniqueAndAnyCaseMode(t *testing.T) {
 
 func TestNumCharFieldsMode(t *testing.T) {
 	configure := Cmd{
-		h:          false,
+		help:       false,
 		c:          false,
 		d:          false,
 		u:          false,
