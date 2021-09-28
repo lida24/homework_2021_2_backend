@@ -22,7 +22,6 @@ func ExecutePipeline(jobs ...job) {
 	}
 
 	wg.Wait()
-	close(outCh)
 }
 
 func runWork(wg *sync.WaitGroup, job job, inCh, outCh chan interface{}) {
@@ -88,7 +87,7 @@ func MultiHash(inCh, outCh chan interface{}) {
 }
 
 func operateMultiHash(wgMultiHash *sync.WaitGroup, outCh chan interface{}, SingleHash string) {
-	slice := make([]chan string, 6, 6)
+	slice := make([]chan string, TH_COUNT, TH_COUNT)
 
 	for i := 0; i < TH_COUNT; i++ {
 		newCh := make(chan string)
