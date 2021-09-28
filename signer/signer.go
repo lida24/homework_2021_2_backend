@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -63,7 +62,6 @@ func operateSingleHash(wgSingleHash *sync.WaitGroup, outCh chan interface{}, dat
 		md5 := DataSignerMd5(data)
 		mutex.Unlock()
 		crc32md5Ch <- DataSignerCrc32(md5)
-		close(crc32md5Ch)
 	}(crc32md5Ch, data)
 
 	crc32 := <-crc32Ch
@@ -90,7 +88,6 @@ func MultiHash(inCh, outCh chan interface{}) {
 }
 
 func operateMultiHash(wgMultiHash *sync.WaitGroup, outCh chan interface{}, SingleHash string) {
-	fmt.Println(SingleHash)
 	slice := make([]chan string, 6, 6)
 
 	for i := 0; i < TH_COUNT; i++ {
@@ -103,7 +100,6 @@ func operateMultiHash(wgMultiHash *sync.WaitGroup, outCh chan interface{}, Singl
 	result := ""
 	for i := 0; i < TH_COUNT; i++ {
 		result += <-slice[i]
-		close(slice[i])
 	}
 	outCh <- result
 	wgMultiHash.Done()
