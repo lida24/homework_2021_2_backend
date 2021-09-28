@@ -2,6 +2,7 @@ package calculate
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -27,6 +28,7 @@ var tests = []struct {
 func TestFlagParser(t *testing.T) {
 	for _, tt := range tests {
 		res, err := Calculate(tt.expr)
+		require.NoError(t, err)
 		if err != nil {
 			fmt.Println(err)
 		}

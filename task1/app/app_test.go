@@ -7,12 +7,12 @@ import (
 func TestCountMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          true,
-		d:          false,
-		u:          false,
-		f:          0,
-		s:          0,
-		i:          false,
+		count:      true,
+		duplicates: false,
+		unique:     false,
+		fields:     0,
+		symbol:     0,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -30,12 +30,12 @@ func TestCountMode(t *testing.T) {
 func TestDuplicatedMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          true,
-		u:          false,
-		f:          0,
-		s:          0,
-		i:          false,
+		count:      false,
+		duplicates: true,
+		unique:     false,
+		fields:     0,
+		symbol:     0,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -53,12 +53,12 @@ func TestDuplicatedMode(t *testing.T) {
 func TestUniqueMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          true,
-		f:          0,
-		s:          0,
-		i:          false,
+		count:      false,
+		duplicates: false,
+		unique:     true,
+		fields:     0,
+		symbol:     0,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -76,12 +76,12 @@ func TestUniqueMode(t *testing.T) {
 func TestAnyCaseMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          false,
-		f:          0,
-		s:          0,
-		i:          true,
+		count:      false,
+		duplicates: false,
+		unique:     false,
+		fields:     0,
+		symbol:     0,
+		ignore:     true,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -105,12 +105,12 @@ func TestAnyCaseMode(t *testing.T) {
 func TestBaseMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          false,
-		f:          0,
-		s:          0,
-		i:          false,
+		count:      false,
+		duplicates: false,
+		unique:     false,
+		fields:     0,
+		symbol:     0,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -128,12 +128,12 @@ func TestBaseMode(t *testing.T) {
 func TestNumFieldsMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          false,
-		f:          1,
-		s:          0,
-		i:          false,
+		count:      false,
+		duplicates: false,
+		unique:     false,
+		fields:     1,
+		symbol:     0,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -157,12 +157,12 @@ func TestNumFieldsMode(t *testing.T) {
 func TestNumCharsMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          false,
-		f:          0,
-		s:          1,
-		i:          false,
+		count:      false,
+		duplicates: false,
+		unique:     false,
+		fields:     0,
+		symbol:     1,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -192,12 +192,12 @@ func TestNumCharsMode(t *testing.T) {
 func TestDuplicatedAndAnyCaseMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          true,
-		u:          false,
-		f:          0,
-		s:          1,
-		i:          true,
+		count:      false,
+		duplicates: true,
+		unique:     false,
+		fields:     0,
+		symbol:     1,
+		ignore:     true,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -215,12 +215,12 @@ func TestDuplicatedAndAnyCaseMode(t *testing.T) {
 func TestCountAndAnyCaseMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          true,
-		d:          false,
-		u:          false,
-		f:          0,
-		s:          1,
-		i:          true,
+		count:      true,
+		duplicates: false,
+		unique:     false,
+		fields:     0,
+		symbol:     1,
+		ignore:     true,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -238,12 +238,12 @@ func TestCountAndAnyCaseMode(t *testing.T) {
 func TestUniqueAndAnyCaseMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          true,
-		f:          0,
-		s:          1,
-		i:          true,
+		count:      false,
+		duplicates: false,
+		unique:     true,
+		fields:     0,
+		symbol:     1,
+		ignore:     true,
 		inputFile:  "",
 		outputFile: "",
 	}
@@ -261,12 +261,12 @@ func TestUniqueAndAnyCaseMode(t *testing.T) {
 func TestNumCharFieldsMode(t *testing.T) {
 	configure := Cmd{
 		help:       false,
-		c:          false,
-		d:          false,
-		u:          false,
-		f:          1,
-		s:          2,
-		i:          false,
+		count:      false,
+		duplicates: false,
+		unique:     false,
+		fields:     1,
+		symbol:     2,
+		ignore:     false,
 		inputFile:  "",
 		outputFile: "",
 	}

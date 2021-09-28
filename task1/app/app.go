@@ -12,12 +12,12 @@ import (
 
 type Cmd struct {
 	help       bool
-	c          bool
-	d          bool
-	u          bool
-	i          bool
-	f          int
-	s          int
+	count      bool
+	duplicates bool
+	unique     bool
+	ignore     bool
+	fields     int
+	symbol     int
 	inputFile  string
 	outputFile string
 }
@@ -27,7 +27,7 @@ type Configure struct {
 }
 
 func (conf Configure) checkI(str string) string {
-	if conf.cmd.i {
+	if conf.cmd.ignore {
 		str = strings.ToLower(str)
 	}
 	return str
@@ -35,15 +35,15 @@ func (conf Configure) checkI(str string) string {
 
 func (conf Configure) checkF(str string) string {
 	arr := strings.Split(str, " ")
-	if len(arr) > conf.cmd.f {
-		str = strings.Join(arr[conf.cmd.f:], " ")
+	if len(arr) > conf.cmd.fields {
+		str = strings.Join(arr[conf.cmd.fields:], " ")
 	}
 	return str
 }
 
 func (conf Configure) checkS(str string) string {
-	if len(str) > conf.cmd.s {
-		str = (str)[conf.cmd.s:]
+	if len(str) > conf.cmd.symbol {
+		str = (str)[conf.cmd.symbol:]
 	}
 	return str
 }
@@ -70,9 +70,9 @@ func (conf Configure) removeDuplicates(lines []string) []string {
 
 func (conf Configure) Counter(lines []string) []string {
 	alreadySeen := make(map[string]bool)
-	count := make(map[string]int)
 
 	j := 0
+	count := 0
 
 	for i, line := range lines {
 
@@ -82,15 +82,15 @@ func (conf Configure) Counter(lines []string) []string {
 
 		if !alreadySeen[line] {
 			alreadySeen[line] = true
-			count[line] = j
+			count = j
 			lines[j] = "1 " + (lines)[i]
 			j++
 		} else {
-			oneLine := lines[count[line]]
+			oneLine := lines[count]
 			arr := strings.Split(oneLine, " ")
 			val, _ := strconv.Atoi(arr[0])
 			oneLine = strings.Join(arr[1:], " ")
-			lines[count[line]] = strconv.Itoa(val+1) + " " + oneLine
+			lines[count] = strconv.Itoa(val+1) + " " + oneLine
 		}
 	}
 	return lines[:j]
@@ -98,7 +98,7 @@ func (conf Configure) Counter(lines []string) []string {
 
 func (conf Configure) Duplicate(lines []string) []string {
 	alreadySeen := make(map[string]bool)
-	count := make(map[string]int)
+	count := 0
 
 	j := 0
 
@@ -110,13 +110,11 @@ func (conf Configure) Duplicate(lines []string) []string {
 
 		if !alreadySeen[line] {
 			alreadySeen[line] = true
-			count[line] = i
-		} else {
-			if count[line] != -1 {
-				lines[j] = lines[count[line]]
-				count[line] = -1
-				j++
-			}
+			count = i
+		} else if count != -1 {
+			lines[j] = lines[count]
+			count = -1
+			j++
 		}
 	}
 
@@ -142,11 +140,11 @@ func (conf Configure) Unique(lines []string) []string {
 func (conf Configure) Do(lines []string, cmd Cmd) []string {
 	conf.cmd = cmd
 	switch true {
-	case conf.cmd.c:
+	case conf.cmd.count:
 		lines = conf.Counter(lines)
-	case conf.cmd.d:
+	case conf.cmd.duplicates:
 		lines = conf.Duplicate(lines)
-	case conf.cmd.u:
+	case conf.cmd.unique:
 		lines = conf.Unique(lines)
 	default:
 		lines = conf.removeDuplicates(lines)
@@ -159,7 +157,7 @@ type Application struct {
 }
 
 func (a Application) scanner(r io.Reader) []string {
-	arr := make([]string, 0)
+	var arr []string
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		arr = append(arr, scanner.Text())
@@ -171,14 +169,15 @@ func (a Application) inFromScan(reader io.Reader) []string {
 	return a.scanner(reader)
 }
 
-func (a Application) inFromFile(arr *[]string) error {
+func (a Application) inFromFile() ([]string, error) {
+	var arr []string
 	file, err := os.Open(a.cmd.inputFile)
 	if err != nil {
-		return err
+		return arr, err
 	}
 	defer file.Close()
-	*arr = a.scanner(file)
-	return nil
+	arr = a.scanner(file)
+	return arr, nil
 }
 
 func (a Application) outFromScan(arr []string) string {
@@ -202,17 +201,17 @@ func (a Application) outFromFile(arr []string) error {
 			return err
 		}
 	}
-	return nil
+	return fileOut.Close()
 }
 
 func (a *Application) Parse() {
 	flag.BoolVar(&a.cmd.help, "help", false, "help")
-	flag.BoolVar(&a.cmd.c, "c", false, "подсчитать количество встречаний строки во входных данных. Вывести это число перед строкой отделив пробелом.")
-	flag.BoolVar(&a.cmd.d, "d", false, "вывести только те строки, которые повторились во входных данных.")
-	flag.BoolVar(&a.cmd.u, "u", false, "вывести только те строки, которые не повторились во входных данных.")
-	flag.BoolVar(&a.cmd.i, "i", false, "не учитывать регистр букв.")
-	flag.IntVar(&a.cmd.f, "f", 0, "не учитывать первые num_fields полей в строке. Полем в строке является непустой набор символов отделённый пробелом.")
-	flag.IntVar(&a.cmd.s, "s", 0, "не учитывать первые num_chars символов в строке.")
+	flag.BoolVar(&a.cmd.count, "c", false, "подсчитать количество встречаний строки во входных данных. Вывести это число перед строкой отделив пробелом.")
+	flag.BoolVar(&a.cmd.duplicates, "d", false, "вывести только те строки, которые повторились во входных данных.")
+	flag.BoolVar(&a.cmd.unique, "u", false, "вывести только те строки, которые не повторились во входных данных.")
+	flag.BoolVar(&a.cmd.ignore, "i", false, "не учитывать регистр букв.")
+	flag.IntVar(&a.cmd.fields, "f", 0, "не учитывать первые num_fields полей в строке. Полем в строке является непустой набор символов отделённый пробелом.")
+	flag.IntVar(&a.cmd.symbol, "s", 0, "не учитывать первые num_chars символов в строке.")
 	flag.Parse()
 
 	var names = []string{a.cmd.inputFile, a.cmd.outputFile}
@@ -232,7 +231,7 @@ func (a Application) filter(arrayBool []bool, f func(bool) bool) []bool {
 }
 
 func (a Application) checkCDU() error {
-	var arrBools = []bool{a.cmd.c, a.cmd.d, a.cmd.u}
+	var arrBools = []bool{a.cmd.count, a.cmd.duplicates, a.cmd.unique}
 
 	if len(a.filter(arrBools, func(b bool) bool { return b })) > 1 {
 		return errors.New("don't use -c -d -u together")
@@ -240,38 +239,36 @@ func (a Application) checkCDU() error {
 	return nil
 }
 
-func (a *Application) RunApp(reader io.Reader) string {
+func (a *Application) RunApp(reader io.Reader) (string, error) {
 	a.Parse()
 
 	if a.cmd.help {
 		flag.PrintDefaults()
-		return ""
+		return "", nil
 	}
 
 	if a.checkCDU() != nil {
 		flag.PrintDefaults()
-		return ""
+		return "", nil
 	}
 
-	arr := make([]string, 0)
+	var arr []string
 	if a.cmd.inputFile == "" {
 		arr = a.inFromScan(reader)
 	} else {
-		if a.inFromFile(&arr) != nil {
-			return ""
-		}
+		arr, _ = a.inFromFile()
 	}
 
 	var u = Configure{}
 	arr = u.Do(arr, a.cmd)
 
 	if a.cmd.outputFile == "" {
-		return a.outFromScan(arr)
+		return a.outFromScan(arr), nil
 	} else {
 		err := a.outFromFile(arr)
 		if err != nil {
-			return "invalid to write to file"
+			return "", errors.New("invalid to write to file")
 		}
 	}
-	return ""
+	return "", nil
 }
